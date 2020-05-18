@@ -1,25 +1,24 @@
-import {BodyParams, Req} from "@tsed/common";
-import {OnInstall, OnVerify, Protocol} from "@tsed/passport";
-import {IStrategyOptions, Strategy} from "passport-local";
-import {Credentials} from "../models/Credentials";
-import {UserRepository} from "../repositories/UserRepository";
+import { BodyParams, Req } from '@tsed/common';
+import { OnVerify, Protocol } from '@tsed/passport';
+import { IStrategyOptions, Strategy } from 'passport-local';
+import { Credentials } from '../models/credentials';
+import { UserRepository } from '../repositories/UserRepository';
 
 @Protocol<IStrategyOptions>({
-  name: "login",
+  name: 'login',
   useStrategy: Strategy,
   settings: {
-    usernameField: "email",
-    passwordField: "password"
-  }
+    usernameField: 'email',
+    passwordField: 'password',
+  },
 })
-export class LoginLocalProtocol implements OnVerify, OnInstall {
-  constructor(private userRepository: UserRepository) {
-  }
+export class LoginLocalProtocol implements OnVerify {
+  constructor(private userRepository: UserRepository) {}
 
   async $onVerify(@Req() request: Req, @BodyParams() credentials: Credentials) {
-    const {email, password} = credentials;
+    const { email, password } = credentials;
 
-    const user = await this.userRepository.findOne({email});
+    const user = await this.userRepository.findOne({ email });
 
     if (!user) {
       return false;
@@ -32,9 +31,5 @@ export class LoginLocalProtocol implements OnVerify, OnInstall {
     }
 
     return user;
-  }
-
-  $onInstall(strategy: Strategy): void {
-    // intercept the strategy instance to adding extra configuration
   }
 }

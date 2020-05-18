@@ -1,31 +1,39 @@
-###############################################################################
-###############################################################################
-##                      _______ _____ ______ _____                           ##
-##                     |__   __/ ____|  ____|  __ \                          ##
-##                        | | | (___ | |__  | |  | |                         ##
-##                        | |  \___ \|  __| | |  | |                         ##
-##                        | |  ____) | |____| |__| |                         ##
-##                        |_| |_____/|______|_____/                          ##
-##                                                                           ##
-## description     : Dockerfile for TsED Application                         ##
-## author          : TsED team                                               ##
-## date            : 20190820                                                ##
-## version         : 1.0                                                     ##
-###############################################################################
-###############################################################################
-FROM node:12.13.0-alpine
+FROM node:dubnium-alpine as builder
 
-RUN apk update && apk add build-base git python
+ENV NODE_ENV=build
 
-COPY package.json .
-COPY yarn.lock .
-COPY ./src ./src
-COPY ./dist ./dist
+USER root
 
-RUN yarn install --production
+WORKDIR /home/node
 
-EXPOSE 8083
-ENV PORT 8083
-ENV NODE_ENV production
+COPY . /home/node
 
-CMD ["yarn", "start:prod"]
+RUN npm install && npm run build
+
+# ---
+
+FROM node:dubnium-alpine
+USER node
+
+ENV PORT=8080
+ENV NODE_ENV=production
+
+WORKDIR /home/node
+
+COPY --from=builder /home/node/package*.json /home/node/
+COPY --from=builder /home/node/dist/ /home/node/dist/
+
+USER root
+
+RUN apk --update --no-cache add curl
+
+RUN rm -rf node_modules && npm install --production
+
+USER node
+
+HEALTHCHECK --interval=30s --timeout=3s \
+CMD curl -f http://localhost:$PORT/healthcheck || exit 1
+
+EXPOSE 8080
+CMD ["npm", "start:prod"]
+

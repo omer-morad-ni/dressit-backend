@@ -1,4 +1,4 @@
-version: '3.5'
+version: "3.5"
 
 services:
   postgres:
@@ -6,7 +6,7 @@ services:
     container_name: postgres_container
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: changeme
+      POSTGRES_PASSWORD: 12345
       PGDATA: /data/postgres
     volumes:
       - postgres:/data/postgres
@@ -48,9 +48,9 @@ services:
     depends_on:
       - postgres
     ports:
-      - "8083:8083"
-    stdin_open: true  # -i
-    tty: true         # -t
+      - "8080:8080"
+    stdin_open: true # -i
+    tty: true # -t
     networks:
       - postgres
 
@@ -61,4 +61,3 @@ networks:
 volumes:
   postgres:
   pgadmin:
-
