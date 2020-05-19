@@ -2,7 +2,7 @@ import { BodyParams, Req } from '@tsed/common';
 import { OnVerify, Protocol } from '@tsed/passport';
 import { IStrategyOptions, Strategy } from 'passport-local';
 import { Credentials } from '../models/credentials';
-import { UserRepository } from '../repositories/UserRepository';
+import { UserRepository } from '../repositories/user-repository';
 
 @Protocol<IStrategyOptions>({
   name: 'login',

@@ -1,4 +1,11 @@
-import { GlobalAcceptMimesMiddleware, ServerLoader, ServerSettings } from '@tsed/common';
+import * as Sentry from '@sentry/node';
+import {
+  AfterRoutesInit,
+  BeforeRoutesInit,
+  GlobalAcceptMimesMiddleware,
+  ServerLoader,
+  ServerSettings,
+} from '@tsed/common';
 import '@tsed/passport';
 import '@tsed/swagger';
 import '@tsed/typeorm';
@@ -6,54 +13,21 @@ import * as bodyParser from 'body-parser';
 import * as compress from 'compression';
 import * as cookieParser from 'cookie-parser';
 import * as cors from 'cors';
+import * as helmet from 'helmet';
 import * as session from 'express-session';
 import * as methodOverride from 'method-override';
-import { User } from './entities/user';
+import serverSettings from './server-settings';
 
-const rootDir = __dirname;
+Sentry.init({
+  dsn: 'https://4a1edd6d10b14f56b6e42f6f0e904cea@o394149.ingest.sentry.io/5243930',
+});
 
-@ServerSettings({
-  rootDir,
-  httpPort: process.env.PORT || 8080,
-  httpsPort: false,
-  acceptMimes: ['application/json'],
-  mount: {
-    '/v1': [`${rootDir}/controllers/**/**-controller.{ts,js}`],
-  },
-  componentsScan: [`${rootDir}/services/*.ts`, `${rootDir}/repositories/*.ts`, `${rootDir}/protocols/*.ts`],
-  passport: {
-    userInfoModel: User,
-  },
-  typeorm: [
-    {
-      name: 'default',
-      type: 'postgres',
-      host: process.env.POSTGRES_HOST || 'localhost',
-      port: 5432,
-      username: process.env.POSTGRES_USER || 'postgres',
-      password: process.env.POSTGRES_PASSWORD || 'changeme',
-      database: process.env.POSTGRES_DB || 'postgres',
-      logging: false,
-      synchronize: true,
-      entities: [`${rootDir}/entities/*{.ts,.js}`],
-      migrations: [`${rootDir}/migrations/*{.ts,.js}`],
-      subscribers: [`${rootDir}/subscriber/*{.ts,.js}`],
-    },
-  ],
-  swagger: {
-    path: '/docs',
-    spec: {
-      securityDefinitions: {
-        'auth:basic': {
-          type: 'basic',
-        },
-      },
-    },
-  },
-})
-export class Server extends ServerLoader {
+@ServerSettings(serverSettings)
+export class Server extends ServerLoader implements AfterRoutesInit, BeforeRoutesInit {
   $beforeRoutesInit(): void | Promise<any> {
-    this.use(GlobalAcceptMimesMiddleware)
+    this.use(Sentry.Handlers.requestHandler())
+      .use(GlobalAcceptMimesMiddleware)
+      .use(helmet())
       .use(cors())
       .use(cookieParser())
       .use(compress({}))
@@ -80,5 +54,9 @@ export class Server extends ServerLoader {
       );
 
     return null;
+  }
+
+  $afterRoutesInit(): void | Promise<any> {
+    this.app.use(Sentry.Handlers.errorHandler());
   }
 }

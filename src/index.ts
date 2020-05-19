@@ -3,11 +3,10 @@ import { Server } from './server';
 
 async function bootstrap() {
   try {
-    $log.debug('Start server...');
     const server = await ServerLoader.bootstrap(Server);
 
     await server.listen();
-    $log.debug('Server initialized');
+    $log.info('Application started successfully');
   } catch (e) {
     $log.error(e);
   }

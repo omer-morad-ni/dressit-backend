@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Req, Status } from '@tsed/common';
 import { Authenticate, Authorize } from '@tsed/passport';
 import { Responses, Returns } from '@tsed/swagger';
-import { User } from '../../entities/user';
+import { User } from '../entities/user';
 
 @Controller('/auth')
 export class PassportController {

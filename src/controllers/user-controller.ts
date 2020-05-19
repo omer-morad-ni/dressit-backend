@@ -1,8 +1,8 @@
 import { BodyParams, Controller, Get, PathParams, Post } from '@tsed/common';
 import { Returns, ReturnsArray } from '@tsed/swagger';
-import { User } from '../../entities/user';
-import { UserCreation } from '../../models/user-creation';
-import { UserRepository } from '../../repositories/UserRepository';
+import { User } from '../entities/user';
+import { UserCreation } from '../models/user-creation';
+import { UserRepository } from '../repositories/user-repository';
 
 @Controller('/users')
 export class UserController {

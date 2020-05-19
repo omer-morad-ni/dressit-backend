@@ -3,7 +3,7 @@ import { Forbidden } from '@tsed/exceptions';
 import { OnVerify, Protocol } from '@tsed/passport';
 import { Strategy } from 'passport-local';
 import { UserCreation } from '../models/user-creation';
-import { UserRepository } from '../repositories/UserRepository';
+import { UserRepository } from '../repositories/user-repository';
 
 @Protocol({
   name: 'signup',
