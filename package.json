@@ -6,7 +6,7 @@
     "clean": "rimraf '{src}/**/*.{js,js.map}'",
     "build": "npm run tsc",
     "test": "npm run clean && npm run lint",
-    "lint": "eslint src test",
+    "lint": "eslint ./src/**/*.ts",
     "lint:fix": "eslint ./src/**/*.ts --fix",
     "tsc": "tsc --project tsconfig.json",
     "tsc:w": "tsc --project tsconfig.json -w",
