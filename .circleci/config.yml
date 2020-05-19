@@ -4,7 +4,7 @@ description: "Node CI/CD (Heroku)"
 defaults: &defaults
   working_directory: ~/repo
   docker:
-    - image: circleci/node:dubnium-alpine
+    - image: circleci/node:dubnium
 
 jobs:
   checkout-scm:
