@@ -50,7 +50,7 @@ jobs:
       - run:
           name: Setup VirtualEnv
           command: |
-            echo 'export TAG=${$CIRCLE_SHA1 | cut -c -7}' >> $BASH_ENV
+            echo 'export TAG=$CIRCLE_SHA1' >> $BASH_ENV
             echo 'export IMAGE_NAME=dressit' >> $BASH_ENV
       - run:
           name: Build and Push Docker Image
