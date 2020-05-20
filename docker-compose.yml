@@ -1,63 +1,64 @@
 version: "3.5"
 
 services:
-  postgres:
-    image: postgres:11
-    container_name: postgres_container
+  mysql:
+    image: mysql:latest
+    container_name: mysql_container
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 12345
-      PGDATA: /data/postgres
+      MYSQL_USER: root
+      MYSQL_PASSWORD: 12345
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: default_schema
     volumes:
-      - postgres:/data/postgres
+      - mysql:/data/mysql
     ports:
-      - "5432:5432"
+      - "3306:3306"
     networks:
-      - postgres
+      - mysql
     restart: unless-stopped
 
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin_container
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin_container
     environment:
-      PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
-      PGADMIN_DEFAULT_PASSWORD: admin
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
     volumes:
-      - pgadmin:/root/.pgadmin
+      - phpmyadmin:/root/.phpmyadmin
     ports:
-      - "5050:80"
+      - "8080:80"
     restart: unless-stopped
     networks:
-      - postgres
+      - mysql
 
-  server:
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: tsed/typeorm:latest
-    container_name: server_container
-    restart: always
-    environment:
-      POSTGRES_HOST: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: changeme
-    depends_on:
-      - postgres
-    ports:
-      - "8080:8080"
-    stdin_open: true # -i
-    tty: true # -t
-    networks:
-      - postgres
+#  server:
+#    build:
+#      context: .
+#      dockerfile: ./Dockerfile
+#      args:
+#        - http_proxy
+#        - https_proxy
+#        - no_proxy
+#    image: tsed/typeorm:latest
+#    container_name: server_container
+#    restart: always
+#    environment:
+#    env_file:
+#      - ./env/.env.local
+#    depends_on:
+#      - mysql
+#    ports:
+#      - "9000:9000"
+#    stdin_open: true # -i
+#    tty: true # -t
+#    networks:
+#      - mysql
 
 networks:
-  postgres:
+  mysql:
     driver: bridge
 
 volumes:
-  postgres:
-  pgadmin:
+  mysql:
+  phpmyadmin:

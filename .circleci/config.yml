@@ -1,5 +1,5 @@
 version: 2
-description: "Node CI/CD (Heroku)"
+description: "Node CI/CD"
 
 defaults: &defaults
   working_directory: ~/repo
@@ -40,8 +40,8 @@ jobs:
       - run:
           name: Build
           command: npm run build
-  docker-build-release:
-    name: Docker Build & Release
+  docker-build:
+    name: Docker Build
     working_directory: ~/repo
     machine: true
     steps:
@@ -56,20 +56,28 @@ jobs:
           name: Build and Push Docker Image
           command: |
             docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-            docker build -t omerico/$IMAGE_NAME:$TAG .
+            docker build -t omerico/$IMAGE_NAME:$TAG -t omerico/$IMAGE_NAME:latest .
             docker push omerico/$IMAGE_NAME:$TAG
-      #        - run:
-      #            name: Publish Github Version
-      #            command: |
-      #              git tag latest -f
-      #              git push -f --tags --no-verify
-      - run:
-          name: Deploy To DigitalOcean
-          command: echo 'Deploy'
       - persist_to_workspace:
           root: ~/repo
           paths: .
-
+  deploy:
+    name: Deploy
+    working_directory: ~/repo
+    machine: true
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - add_ssh_keys:
+          fingerprints:
+            - "fe:ba:a1:4b:01:5e:c8:a9:41:be:d3:ce:cb:4d:69:90"
+      - run:
+          name: Deploy To DigitalOcean
+          command: ssh root@dressit.live 'cd /var/scripts && . deploy.sh';
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
+          
 workflows:
   version: 2
   test-deploy:
@@ -80,11 +88,19 @@ workflows:
           context: bingetime
           requires:
             - checkout-scm
-      - docker-build-release:
+      - docker-build:
           context: bingetime
           requires:
             - checkout-scm
             - lint-and-build
+          filters:
+            branches:
+              only:
+                - master
+      - deploy:
+          context: bingetime
+          requires:
+            - docker-build
           filters:
             branches:
               only:

@@ -1,5 +1,3 @@
-import { User } from './entities/user';
-
 const rootDir = __dirname;
 
 const serverSettings = {
@@ -11,18 +9,15 @@ const serverSettings = {
     '/v1': [`${rootDir}/controllers/**/**-controller.{ts,js}`],
   },
   componentsScan: [`${rootDir}/services/*.ts`, `${rootDir}/repositories/*.ts`, `${rootDir}/protocols/*.ts`],
-  passport: {
-    userInfoModel: User,
-  },
   typeorm: [
     {
       name: 'default',
-      type: 'postgres',
-      host: process.env.POSTGRES_HOST || 'localhost',
-      port: 5432,
-      username: process.env.POSTGRES_USER || 'postgres',
-      password: process.env.POSTGRES_PASSWORD || 'changeme',
-      database: process.env.POSTGRES_DB || 'postgres',
+      type: 'mysql',
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT,
+      username: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
       logging: false,
       synchronize: true,
       entities: [`${rootDir}/entities/*.ts`],
