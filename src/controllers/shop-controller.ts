@@ -1,4 +1,4 @@
-import { BodyParams, Controller, Get, Post } from '@tsed/common';
+import { BodyParams, Controller, Post } from '@tsed/common';
 import { Shop } from '../entities/shop';
 import { ShopService } from '../services/shop.service';
 
@@ -9,10 +9,5 @@ export class ShopController {
   @Post('/')
   create(@BodyParams() shop: Shop): Promise<Shop> {
     return this.shopService.create(shop);
-  }
-
-  @Get('/')
-  getList(): Promise<Shop[]> {
-    return this.shopService.find();
   }
 }
