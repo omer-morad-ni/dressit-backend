@@ -45,7 +45,7 @@ jobs:
     working_directory: ~/repo
     machine: true
     environment:
-      SHORT_HASH: $(echo $CIRCLE_SHA1 | cut -c -7)
+      TAG: $(echo $CIRCLE_SHA1 | cut -c -7)
       IMAGE_NAME: dressit
     steps:
       - attach_workspace:
