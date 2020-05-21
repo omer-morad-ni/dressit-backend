@@ -44,20 +44,18 @@ jobs:
     name: Docker Build
     working_directory: ~/repo
     machine: true
+    environment:
+      SHORT_GIT_HASH: $(echo $CIRCLE_SHA1 | cut -c -7)
+      IMAGE_NAME: dressit
     steps:
       - attach_workspace:
           at: ~/repo
-      - run:
-          name: Setup VirtualEnv
-          command: |
-            echo 'export TAG=$CIRCLE_SHA1' >> $BASH_ENV
-            echo 'export IMAGE_NAME=dressit' >> $BASH_ENV
       - run:
           name: Build and Push Docker Image
           command: |
             docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
             docker build -t omerico/$IMAGE_NAME:$TAG -t omerico/$IMAGE_NAME:latest .
-            docker push omerico/$IMAGE_NAME:$TAG
+            docker push "omerico/$IMAGE_NAME:$TAG" "omerico/$IMAGE_NAME:latest"
       - persist_to_workspace:
           root: ~/repo
           paths: .
