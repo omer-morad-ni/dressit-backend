@@ -44,12 +44,14 @@ jobs:
     name: Docker Build
     working_directory: ~/repo
     machine: true
-    environment:
-      TAG: $(eval echo ${CIRCLE_SHA1} | cut -c1-7)
-      IMAGE_NAME: dressit
     steps:
       - attach_workspace:
           at: ~/repo
+      - run:
+          name: Setup VirtualEnv
+          command: |
+            echo 'export TAG=$(eval echo ${CIRCLE_SHA1} | cut -c1-7)' >> $BASH_ENV
+            echo 'export IMAGE_NAME=dressit' >> $BASH_ENV
       - run:
           name: Build and Push Docker Image
           command: |
