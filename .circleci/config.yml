@@ -57,7 +57,8 @@ jobs:
           command: |
             docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
             docker build -t omerico/$IMAGE_NAME:$TAG -t omerico/$IMAGE_NAME:latest .
-            docker push "omerico/$IMAGE_NAME:$TAG" "omerico/$IMAGE_NAME:latest"
+            docker push "omerico/$IMAGE_NAME:$TAG"
+            docker push "omerico/$IMAGE_NAME:latest"
       - persist_to_workspace:
           root: ~/repo
           paths: .
