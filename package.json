@@ -73,7 +73,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "lint-staged",
+      "post-update": "echo 'https://app.circleci.com/pipelines/github/omer-morad-ni/dressit-backend'"
     }
   },
   "lint-staged": {
