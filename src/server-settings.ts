@@ -4,9 +4,7 @@ import { Env } from '@tsed/core';
 
 const { env } = process;
 const { NODE_ENV = Env.DEV } = env;
-const pathh = path.join(__dirname, '..', `env/.env.${NODE_ENV}`);
-console.log(pathh);
-configEnv({ path: pathh });
+configEnv({ path: path.join(__dirname, '..', `env/.env.${NODE_ENV}`) });
 
 const rootDir = __dirname;
 
@@ -30,6 +28,7 @@ const serverSettings = {
       username: env.DB_USERNAME,
       password: env.DB_PASSWORD,
       database: env.DB_NAME,
+      ssl: null,
       logging: false,
       synchronize: true,
       entities: [`${rootDir}/entities/*.ts`],
@@ -48,5 +47,13 @@ const serverSettings = {
     },
   },
 };
+
+if (NODE_ENV === Env.PROD) {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+  // @ts-ignore
+  serverSettings.typeorm.ssl = {
+    ca: process.env.SSL_CERT,
+  };
+}
 
 export default serverSettings;
