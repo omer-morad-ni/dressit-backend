@@ -15,7 +15,7 @@ RUN npm install && npm run build
 FROM node:dubnium-alpine
 USER node
 
-ENV PORT=8080
+ENV PORT=9000
 ENV NODE_ENV=production
 
 WORKDIR /home/node
@@ -34,6 +34,6 @@ USER node
 HEALTHCHECK --interval=30s --timeout=3s \
 CMD curl -f http://localhost:$PORT/healthcheck || exit 1
 
-EXPOSE 8080
-CMD ["npm", "start:prod"]
+EXPOSE 9000
+CMD ["npm", "start"]
 

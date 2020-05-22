@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/node';
 import {
-  AfterRoutesInit,
+  AfterRoutesInit, BeforeInit,
   BeforeRoutesInit,
   GlobalAcceptMimesMiddleware,
   ServerLoader,
@@ -14,7 +14,6 @@ import * as compress from 'compression';
 import * as cookieParser from 'cookie-parser';
 import * as cors from 'cors';
 import * as helmet from 'helmet';
-import * as session from 'express-session';
 import * as methodOverride from 'method-override';
 import serverSettings from './server-settings';
 
@@ -26,8 +25,8 @@ Sentry.init({
 export class Server extends ServerLoader implements AfterRoutesInit, BeforeRoutesInit {
   $beforeRoutesInit(): void | Promise<any> {
     this.use(Sentry.Handlers.requestHandler())
-      .use(GlobalAcceptMimesMiddleware)
       .use(helmet())
+      .use(GlobalAcceptMimesMiddleware)
       .use(cors())
       .use(cookieParser())
       .use(compress({}))
@@ -36,20 +35,6 @@ export class Server extends ServerLoader implements AfterRoutesInit, BeforeRoute
       .use(
         bodyParser.urlencoded({
           extended: true,
-        })
-      )
-      .use(
-        session({
-          secret: 'mysecretkey',
-          resave: true,
-          saveUninitialized: true,
-          // maxAge: 36000,
-          cookie: {
-            path: '/',
-            httpOnly: true,
-            secure: false,
-            maxAge: null,
-          },
         })
       );
 
