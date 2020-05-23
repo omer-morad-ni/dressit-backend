@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/node';
 import {
-  AfterRoutesInit, BeforeInit,
+  AfterRoutesInit,
   BeforeRoutesInit,
   GlobalAcceptMimesMiddleware,
   ServerLoader,
@@ -15,7 +15,7 @@ import * as cookieParser from 'cookie-parser';
 import * as cors from 'cors';
 import * as helmet from 'helmet';
 import * as methodOverride from 'method-override';
-import serverSettings from './server-settings';
+import serverSettings from './config/server-settings';
 
 Sentry.init({
   dsn: 'https://4a1edd6d10b14f56b6e42f6f0e904cea@o394149.ingest.sentry.io/5243930',

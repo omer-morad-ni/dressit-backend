@@ -9,7 +9,6 @@ services:
       MYSQL_USER: root
       MYSQL_PASSWORD: root
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: default_schema
     volumes:
       - mysql:/data/mysql
     ports:
