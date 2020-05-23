@@ -48,10 +48,13 @@ const serverSettings = {
 };
 
 if (NODE_ENV === Env.PROD) {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-  // @ts-ignore
-  serverSettings.typeorm.ssl = {
-    ca: process.env.SSL_CERT,
+  serverSettings.typeorm[0] = {
+    ...serverSettings.typeorm[0],
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore
+    ssl: {
+      ca: process.env.SSL_CERT,
+    },
   };
 }
 
