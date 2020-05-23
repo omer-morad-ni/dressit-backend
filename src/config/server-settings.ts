@@ -1,11 +1,12 @@
-import { Env } from '@tsed/core';
+import * as fs from 'fs';
 import * as path from 'path';
+import { Env } from '@tsed/core';
 import { config as configEnv } from 'dotenv';
 import loggerSettings from './logger';
 
 const rootDir = path.join(__dirname, '..');
 const { env } = process;
-const { NODE_ENV = Env.DEV } = env;
+const { NODE_ENV = Env.DEV } = process.env;
 configEnv({ path: path.join(rootDir, '..', `env/.env.${NODE_ENV}`) });
 
 const serverSettings = {
@@ -28,6 +29,9 @@ const serverSettings = {
       username: env.DB_USERNAME,
       password: env.DB_PASSWORD,
       database: env.DB_NAME,
+      ssl: {
+        ca: fs.readFileSync(path.join(rootDir, '..', `env/ca-certificate.crt`)).toString(),
+      },
       logging: false,
       synchronize: true,
       entities: [`${rootDir}/entities/*.ts`],
@@ -47,15 +51,15 @@ const serverSettings = {
   },
 };
 
-if (NODE_ENV === Env.PROD) {
-  serverSettings.typeorm[0] = {
-    ...serverSettings.typeorm[0],
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-    // @ts-ignore
-    ssl: {
-      ca: process.env.SSL_CERT,
-    },
-  };
-}
+// if (NODE_ENV === Env.PROD) {
+//   serverSettings.typeorm[0] = {
+//     ...serverSettings.typeorm[0],
+//     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+//     // @ts-ignore
+//     ssl: {
+//       ca: path.join(rootDir, '..', `env/ca-certificate.crt`),
+//     },
+//   };
+// }
 
 export default serverSettings;
