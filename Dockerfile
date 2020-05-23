@@ -1,8 +1,9 @@
-FROM node:dubnium-alpine as builder
+FROM node:dubnium-alpine
 
 ENV NODE_ENV=build
 
 USER root
+RUN apk --update --no-cache add curl
 
 WORKDIR /home/node
 
@@ -10,30 +11,16 @@ COPY . /home/node
 
 RUN npm install && npm run build
 
-# ---
-
-FROM node:dubnium-alpine
-USER node
-
 ENV PORT=9000
 ENV NODE_ENV=production
 
-WORKDIR /home/node
-
-COPY --from=builder /home/node/package*.json /home/node/
-COPY --from=builder /home/node/dist/ /home/node/dist/
-
-USER root
-
-RUN apk --update --no-cache add curl
-
 RUN rm -rf node_modules && npm install --production
+
+HEALTHCHECK --interval=30s --timeout=3s \
+    CMD curl -f http://localhost:$PORT/v1/healthcheck || exit 1
 
 USER node
 
-HEALTHCHECK --interval=30s --timeout=3s \
-CMD curl -f http://localhost:$PORT/healthcheck || exit 1
-
 EXPOSE 9000
-CMD ["npm", "start"]
 
+CMD ["npm", "start"]
