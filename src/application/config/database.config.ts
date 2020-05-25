@@ -2,14 +2,12 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { registerAs } from '@nestjs/config';
 
-const { env } = process;
-
 const database = registerAs('db', () => ({
-  host: env.DB_HOST || 'localhost',
-  port: parseInt(env.DB_PORT, 10),
-  username: env.DB_USERNAME,
-  password: env.DB_PASSWORD,
-  name: env.DB_NAME,
+  host: process.env.DB_HOST,
+  port: parseInt(process.env.DB_PORT, 10),
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  name: process.env.DB_NAME,
   ssl_ca: fs.readFileSync(path.join(__dirname, '..', '..', '..', 'env/ca-certificate.crt')),
 }));
 

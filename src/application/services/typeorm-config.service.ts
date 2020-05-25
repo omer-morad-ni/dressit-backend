@@ -11,8 +11,6 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
 
   public createTypeOrmOptions(): TypeOrmModuleOptions {
     const config: MysqlConnectionOptions = {
-      connectTimeout: 60 * 60 * 1000,
-      acquireTimeout: 60 * 60 * 1000,
       type: 'mysql',
       host: this.config.get('db.host'),
       port: this.config.get('db.port'),
